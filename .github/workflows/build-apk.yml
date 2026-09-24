@@ -3,8 +3,9 @@ name: Build Android APK
 on:
   push:
     branches:
-      - main # Change to your branch name if different (e.g., master)
-  workflow_dispatch: # Allows manual trigger from GitHub web UI
+      - main
+      - master
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,14 +21,10 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
-        run: |
-          cd orange-energy-app
-          npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       - name: Build Web Assets
-        run: |
-          cd orange-energy-app
-          npm run build
+        run: npm run build
 
       - name: Setup Java JDK
         uses: actions/setup-java@v4
@@ -39,13 +36,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Sync Capacitor
-        run: |
-          cd orange-energy-app
-          npx cap sync android
+        run: npx cap sync android
 
       - name: Build Android APK
         run: |
-          cd orange-energy-app/android
+          cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
@@ -53,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: orange-energy-app/android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
